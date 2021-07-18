@@ -1,0 +1,25 @@
+server:
+  port: 56081
+  servlet:
+    context-path: /database-strategy
+spring:
+  application:
+    name: database-strategy
+  http:
+    encoding:
+      enabled: true
+      charset: utf-8
+      force: true
+  main:
+    allow-bean-definition-overriding: true
+#sharding-jdbc分片规则
+#配置数据源 m0,m1,m2,s0,s1,s2
+ shardingsphere:
+   datasource:
+     names: m0,m1,m2,s0,s1,s2
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
