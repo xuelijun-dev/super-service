@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xue.mapper.StoreInfoMapper">
+    
+    <resultMap type="StoreInfo" id="StoreInfoResult">
+        <result property="id"    column="id"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="reputation"    column="reputation"    />
+        <result property="regionCode"    column="region_code"    />
+        <result property="regionName"    column="region_name"    />
+    </resultMap>
+	
+	<sql id="selectStoreInfoVo">
+        select id, region_code, store_name, reputation from store_info
+    </sql>
+	
+    <select id="selectStoreInfoWithRegionList" parameterType="StoreInfo" resultMap="StoreInfoResult">
+        select s.id,s.region_code,s.store_name,s.reputation,r.region_name
+        from store_info s
+        left join region r on s.region_code = r.region_code
+        <where>  
+            <if test="id != null "> and s.id = #{id}</if>
+             <if test="regionCode != null "> and s.region_code = #{regionCode}</if>
+             <if test="storeName != null  and storeName != '' "> and s.store_name = #{storeName}</if>
+             <if test="reputation != null "> and s.reputation = #{reputation}</if>
+         </where>
+    </select>
+
+    <select id="selectStoreInfoList" parameterType="StoreInfo" resultMap="StoreInfoResult">
+        <include refid="selectStoreInfoVo"/>
+        <where>
+            <if test="id != null "> and id = #{id}</if>
+            <if test="regionCode != null "> and region_code = #{regionCode}</if>
+            <if test="storeName != null  and storeName != '' "> and store_name = #{storeName}</if>
+            <if test="reputation != null "> and reputation = #{reputation}</if>
+        </where>
+    </select>
+
+
+    
+    <select id="selectStoreInfoById" parameterType="Long" resultMap="StoreInfoResult">
+        <include refid="selectStoreInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStoreInfo" parameterType="StoreInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into store_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+			<if test="regionCode != null  ">region_code,</if>
+			<if test="storeName != null  and storeName != ''  ">store_name,</if>
+			<if test="reputation != null  ">reputation,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">#{id},</if>
+			<if test="regionCode != null  ">#{regionCode},</if>
+			<if test="storeName != null  and storeName != ''  ">#{storeName},</if>
+			<if test="reputation != null  ">#{reputation},</if>
+         </trim>
+    </insert>
+
+
+    <update id="updateStoreInfo" parameterType="StoreInfo">
+        update store_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="regionCode != null  ">region_code = #{regionCode},</if>
+            <if test="storeName != null  ">store_name = #{storeName},</if>
+            <if test="reputation != null  ">reputation = #{reputation},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteStoreInfoById" parameterType="Long">
+        delete from store_info where id = #{id}
+    </delete>
+    
+</mapper>

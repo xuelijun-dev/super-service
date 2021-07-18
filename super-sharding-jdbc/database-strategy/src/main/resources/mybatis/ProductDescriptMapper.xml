@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xue.mapper.ProductDescriptMapper">
+    
+    <resultMap type="ProductDescript" id="ProductDescriptResult">
+        <result property="id"    column="id"    />
+        <result property="productInfoId"    column="product_info_id"    />
+        <result property="storeInfoId"    column="store_info_id"    />
+        <result property="descript"    column="descript"    />
+    </resultMap>
+	
+	<sql id="selectProductDescriptVo">
+        select id,product_info_id, store_info_id, descript from product_info
+    </sql>
+    
+    <select id="selectProductDescriptById" parameterType="Long" resultMap="ProductDescriptResult">
+        <include refid="selectProductDescriptVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProductDescript" parameterType="ProductDescript" useGeneratedKeys="true" keyProperty="id">
+        insert into product_descript
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productInfoId != null  ">product_info_id,</if>
+            <if test="storeInfoId != null  ">store_info_id,</if>
+			<if test="descript != null  ">descript,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="productInfoId != null  ">#{productInfoId},</if>
+			<if test="storeInfoId != null  ">#{storeInfoId},</if>
+			<if test="descript != null  ">#{descript},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateProductDescript" parameterType="ProductDescript">
+        update product_descript
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productInfoId != null  ">product_info_id = #{productInfoId},</if>
+            <if test="storeInfoId != null  ">store_info_id = #{storeInfoId},</if>
+            <if test="descript != null  ">descript = #{descript},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteProductDescriptById" parameterType="Long">
+        delete from product_descript where id = #{id}
+    </delete>
+    
+</mapper>

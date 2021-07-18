@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xue.mapper.RegionMapper">
+    
+    <resultMap type="Region" id="RegionResult">
+        <result property="id"    column="id"    />
+        <result property="regionCode"    column="region_code"    />
+        <result property="regionName"    column="region_name"    />
+        <result property="level"    column="level"    />
+        <result property="parentRegionCode"    column="parent_region_code"    />
+    </resultMap>
+	
+	<sql id="selectRegionVo">
+        select id, region_code, region_name, level, parent_region_code from region
+    </sql>
+	
+    <select id="selectRegionList" parameterType="Region" resultMap="RegionResult">
+        <include refid="selectRegionVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+             <if test="regionCode != null "> and region_code = #{regionCode}</if>
+             <if test="regionName != null  and regionName != '' "> and region_name = #{regionName}</if>
+             <if test="level != null "> and level = #{level}</if>
+             <if test="parentRegionCode != null "> and parent_region_code = #{parentRegionCode}</if>
+         </where>
+    </select>
+    
+    <select id="selectRegionById" parameterType="Long" resultMap="RegionResult">
+        <include refid="selectRegionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertRegion" parameterType="Region" useGeneratedKeys="true" keyProperty="id">
+        insert into region
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+			<if test="regionCode != null  ">region_code,</if>
+			<if test="regionName != null  and regionName != ''  ">region_name,</if>
+			<if test="level != null  ">level,</if>
+			<if test="parentRegionCode != null  ">parent_region_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">#{id},</if>
+			<if test="regionCode != null  ">#{regionCode},</if>
+			<if test="regionName != null  and regionName != ''  ">#{regionName},</if>
+			<if test="level != null  ">#{level},</if>
+			<if test="parentRegionCode != null  ">#{parentRegionCode},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateRegion" parameterType="Region">
+        update region
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="regionCode != null  ">region_ode = #{regionCode},</if>
+            <if test="regionName != null  ">region_name = #{regionName},</if>
+            <if test="level != null  ">level = #{level},</if>
+            <if test="parentRegionCode != null  ">parent_region_code = #{parentRegionCode},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteRegionById" parameterType="Long">
+        delete from region where id = #{id}
+    </delete>
+	
+    <delete id="deleteRegionByIds" parameterType="String">
+        delete from region where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xue.mapper.ProductMapper">
+    
+    <resultMap type="Product" id="ProductResult">
+        <result property="productInfoId"    column="product_info_id"    />
+        <result property="storeInfoId"    column="store_info_id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="spec"    column="spec"    />
+        <result property="regionCode"    column="region_code"    />
+        <result property="price"    column="price"    />
+        <result property="descript"    column="descript"    />
+        <result property="reputation"    column="reputation"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="regionName"    column="region_name"    />
+
+    </resultMap>
+	
+	<sql id="selectProductVo">
+        select product_info_id, store_info_id, product_name, spec, region_code,price from product_info
+    </sql>
+	
+    <select id="selectProductListWithStoreAndDescription" parameterType="Product" resultMap="ProductResult">
+        select p.product_info_id, p.store_info_id, p.product_name, p.spec, p.region_code, p.price,
+               d.descript, s.sotre_name, s.reputation, r.region_name
+        from product_info
+        left join descript d on d.product_info_id = p.product_info_id
+        left join store_info s on s.region_code = p.region_code
+        left join region r on r.region_code = s.p.region_code
+        <where>  
+            <if test="productInfoId != null "> and p.product_info_id = #{productInfoId}</if>
+            <if test="storeInfoId != null "> and p.store_info_id = #{storeInfoId}</if>
+             <if test="productName != null "> and p.product_name = #{productName}</if>
+             <if test="spec != null "> and p.spec = #{spec}</if>
+             <if test="regionCode != null "> and p.region_code = #{regionCode}</if>
+             <if test="price != null "> and p.price = #{price}</if>
+         </where>
+    </select>
+
+    <select id="selectProductList" parameterType="Product" resultMap="ProductResult">
+        <include refid="selectProductVo"/>
+        <where>
+            <if test="productInfoId != null "> and product_info_id = #{productInfoId}</if>
+            <if test="storeInfoId != null "> and store_info_id = #{storeInfoId}</if>
+            <if test="productName != null "> and product_name = #{productName}</if>
+            <if test="spec != null "> and spec = #{spec}</if>
+            <if test="regionCode != null "> and region_code = #{regionCode}</if>
+            <if test="price != null "> and price = #{price}</if>
+        </where>
+    </select>
+    
+    <select id="selectProductById" parameterType="Long" resultMap="ProductResult">
+        <include refid="selectProductVo"/>
+        where product_info_id = #{productInfoId}
+    </select>
+        
+    <insert id="insertProduct" parameterType="Product" useGeneratedKeys="true" keyProperty="productInfoId">
+        insert into product_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="storeInfoId != null  ">storeInfoId,</if>
+			<if test="productName != null  ">product_name,</if>
+			<if test="spec != null  ">spec,</if>
+			<if test="regionCode != null  ">region_ode,</if>
+			<if test="price != null  ">price,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="storeInfoId != null  ">#{storeInfoId},</if>
+			<if test="productName != null  ">#{productName},</if>
+			<if test="spec != null  ">#{spec},</if>
+			<if test="regionCode != null  ">#{regionCode},</if>
+			<if test="price != null  ">#{price},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateProduct" parameterType="Product">
+        update product_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="storeInfoId != null  ">storeInfoId = #{storeInfoId},</if>
+            <if test="productName != null  ">product_name = #{productName},</if>
+            <if test="spec != null  ">spec = #{spec},</if>
+            <if test="regionCode != null  ">region_ode = #{regionCode},</if>
+            <if test="price != null  ">price = #{price},</if>
+        </trim>
+        where product_info_id = #{productInfoId}
+    </update>
+
+	<delete id="deleteProductById" parameterType="Long">
+        delete from product_info where product_info_id = #{productInfoId}
+    </delete>
+    
+</mapper>
